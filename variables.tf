@@ -22,3 +22,11 @@ variable "policy" {
     description = "Archivo de politica Json"
     default = "policy.json"
 }
+variable "iam_for_lambda" {
+  description = "politica de iam para funcion lambda"
+  name  = "iam_for_lambda_recognition"
+}
+variable "name_for_lambda"{
+  description = "Nombre para funcion lambda"
+  name        = "lambda_recognition"
+}
