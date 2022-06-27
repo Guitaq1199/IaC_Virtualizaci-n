@@ -7,10 +7,20 @@ variable "bucket_prefix" {
   description = "Creación de bucket para proyecto"
   default =  "SongRecomendation.com"
 }
+variable "bucket_prefix_for_lambda" {
+  type = string
+  description = "Creación de bucket privado para lambda"
+  default =  "emotionrecognition"
+}
 variable "acl" {
     type = string
     description = "default public"
     default = "public-read"
+}
+variable "acl_lambda_private" {
+    type = string
+    description = "default public"
+    default = "private"
 }
 variable "versioning" {
   type = bool
@@ -23,10 +33,12 @@ variable "policy" {
     default = "policy.json"
 }
 variable "iam_for_lambda" {
-  description = "politica de iam para funcion lambda"
-  name  = "iam_for_lambda_recognition"
+  type          = string
+  description   = "politica de iam para funcion lambda"
+  default  = "iam_for_lambda_recognition"
 }
 variable "name_for_lambda"{
+  type        = string
   description = "Nombre para funcion lambda"
-  name        = "lambda_recognition"
+  default     = "lambda_recognition"
 }

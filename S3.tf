@@ -24,12 +24,3 @@ resource "aws_s3_bucket_website_configuration" "s3_website_configuration" {
   }
  
 }
-
-resource "aws_s3_object" "index" {
-  bucket = aws_s3_bucket.S3_website_proyect.id
-  key = "index.html"
-  acl = var.acl
-  source = "C:/Users/Marcelo Rosales/OneDrive - Universidad Rafael Landivar/Escritorio/index.html"
-  force_destroy = true
-
-}
