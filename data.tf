@@ -11,6 +11,6 @@ data "aws_iam_policy_document"  "ima_policy_website_s3"{
         type        = "AWS"
       }
       resources = [ 
-        "${aws_s3_bucket.s3_website.arn}/*" ]
+        "${aws_s3_bucket.S3_website_proyect.arn}/*" ]
     }
 }

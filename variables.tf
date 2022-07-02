@@ -5,7 +5,7 @@ variable "aws-region"{
 variable "bucket_prefix" {
   type = string
   description = "Creación de bucket para proyecto"
-  default =  "SongRecomendation.com"
+  default =  "songrecomendationgrouptree.com"
 }
 variable "acl" {
     type = string
