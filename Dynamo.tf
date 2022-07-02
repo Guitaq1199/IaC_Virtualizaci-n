@@ -3,11 +3,12 @@ resource "aws_dynamodb_table" "dynamo_song_recomendation" {
    billing_mode = "PROVISIONED" 
    read_capacity = "30" 
    write_capacity = "30" 
+   hash_key = "songRecomendation" 
    attribute { 
-      name = "noteId" 
+      name = "songRecomendation" 
       type = "S" 
    } 
-   hash_key = "noteId" 
+   
    ttl { 
      enabled = true
      attribute_name = "expiryPeriod"  
