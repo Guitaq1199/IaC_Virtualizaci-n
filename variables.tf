@@ -6,8 +6,8 @@ variable "aws-region"{
 variable "bucket_prefix_lambda_recognition" {
   type = string
   description = "Creación de bucket para lambda de reconocimiento"
-  #default =  "storageimages2023"
-  default =  "storageimages2022"
+  default =  "storageimages2023"
+  #default =  "storageimages2022"
 }
 #Nombre de bucket de website
 variable "bucket_prefix" {
