@@ -2,10 +2,15 @@ variable "aws-region"{
     description =   "Region de AWS."
     default     =   "us-east-1"
 }
+variable "bucket_prefix_lambda_recognition" {
+  type = string
+  description = "Creación de bucket para lambda de reconocimiento"
+  default =  ""
+}
 variable "bucket_prefix" {
   type = string
   description = "Creación de bucket para proyecto"
-  default =  "songrecomendationgrouptree.com"
+  default =  "storageimages2022"
 }
 variable "acl" {
     type = string

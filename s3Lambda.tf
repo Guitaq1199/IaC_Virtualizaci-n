@@ -1,7 +1,7 @@
 // S3 for store lambdas zip files
-resource "aws_s3_bucket" "s3_lambdas" {
 
-  bucket        = "storageimages2022"
+resource "aws_s3_bucket" "s3_lambdas" {
+  bucket        = var.bucket_prefix_lambda_recognition
   force_destroy = true
 }
 

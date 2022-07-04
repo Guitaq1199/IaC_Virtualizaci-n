@@ -1,3 +1,4 @@
+
 resource "aws_api_gateway_rest_api" "apigateway"{
     name = "APIUploadImage"
     description = "API Gateway para Imagen"
@@ -118,7 +119,8 @@ resource "aws_lambda_permission" "api_gw_Emotion" {
   function_name = aws_lambda_function.getEmotion.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_api_gateway_rest_api.apigateway.execution_arn}/*/${aws_api_gateway_method.ImageDetails_post.http_method}/${aws_api_gateway_resource.image_upload.path_part}"
+  //source_arn = "${aws_api_gateway_rest_api.apigateway.execution_arn}/*/${aws_api_gateway_method.ImageDetails_post.http_method}/${aws_api_gateway_resource.image_upload.path_part}"
+
 }
 
 resource "aws_api_gateway_method" "ImageDetails_cors" {

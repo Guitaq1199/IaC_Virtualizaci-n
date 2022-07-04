@@ -1,3 +1,4 @@
+
 resource "aws_lambda_function" "getEmotion" {
 
   function_name = "ImageEmotionProyecto2022"
