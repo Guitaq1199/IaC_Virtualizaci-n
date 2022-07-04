@@ -1,13 +1,11 @@
 resource "aws_dynamodb_table" "dynamo_song_recomendation" { 
-   name = "song_recomendation" 
-   billing_mode = "PROVISIONED" 
-   read_capacity = "30" 
-   write_capacity = "30" 
-   hash_key = "songRecomendation" 
+   name = "SongRecomendation" 
+   billing_mode = "PAY_PER_REQUEST" 
+   hash_key = "UserId" 
    attribute { 
-      name = "songRecomendation" 
+      name = "UserId" 
       type = "S" 
-   } 
+   }
    
    ttl { 
      enabled = true
@@ -15,10 +13,4 @@ resource "aws_dynamodb_table" "dynamo_song_recomendation" {
    }
    point_in_time_recovery { enabled = true } 
    server_side_encryption { enabled = true } 
-   lifecycle { ignore_changes = [ "write_capacity", "read_capacity" ] }
 } 
-
-module  "table_autoscaling" { 
-   source = "snowplow-devops/dynamodb-autoscaling/aws" 
-   table_name = aws_dynamodb_table.dynamo_song_recomendation.name
-}
