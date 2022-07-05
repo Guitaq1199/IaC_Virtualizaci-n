@@ -4,7 +4,7 @@ resource "aws_lambda_function" "getEmotion" {
   handler       = "lambda_function.lambda_handler"
   runtime       = "python3.9"
   timeout       = 3
-  memory_size   = 512
+  memory_size   = 1024
 
   s3_bucket = aws_s3_bucket.s3_lambdas.id
   s3_key    = aws_s3_object.getEmotion_zip.key
@@ -12,6 +12,8 @@ resource "aws_lambda_function" "getEmotion" {
   source_code_hash = data.archive_file.codeImageEmotion_zip.output_base64sha256
 
   role = aws_iam_role.face_details_service.arn
+
+  layers = [aws_lambda_layer_version.lambda_layer.arn]
 
 }
 
@@ -32,19 +34,4 @@ resource "aws_lambda_function" "getPlaylist" {
 
 }
 
-resource "aws_lambda_function" "getTracks" {
 
-  function_name = "FunctionTracksID"
-  handler       = "index.handler"
-  runtime       = "nodejs16.x"
-  timeout       = 3
-  memory_size   = 1024
-
-  s3_bucket = aws_s3_bucket.s3_lambdas.id
-  s3_key    = aws_s3_object.getTracks_zip.key
-
-  source_code_hash = data.archive_file.codeTracksID_zip.output_base64sha256
-
-  role = aws_iam_role.face_details_service.arn
-
-}

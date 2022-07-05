@@ -1,6 +1,7 @@
 import json
 import boto3
 import base64
+import requests
 
 BUCKET_NAME = 'proyectovirtualizacion2022v1'
 
@@ -21,10 +22,19 @@ def lambda_handler(event, context):
     response = rekognitionClient.detect_faces(Image={'S3Object': {'Bucket': BUCKET_NAME, 'Name': file_name}}, Attributes=["ALL"])
     faceResponse = response['FaceDetails']
     emotionsData = faceResponse[0]['Emotions'][0]
-
+    
+    if emotionsData["Type"] == "HAPPY" or emotionsData["Type"] == "SURPRISED":
+        emotionsData["Type"] = "HAPPY"
+    elif emotionsData["Type"] == "CALM":
+        emotionsData["Type"] = "CALM VIBES"
+    else:
+        emotionsData["Type"] = "HAPPY"
+        
+    dataEmotion = emotionsData["Type"]
+        
+    response = requests.post(f"https://gg3l4ukhbc.execute-api.us-east-1.amazonaws.com/v1/playlist?name={dataEmotion}")
+    
     return {
         'statusCode': 200,
-        'body': emotionsData
+        'body': response.json()
     }
-
-    

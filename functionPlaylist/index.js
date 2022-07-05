@@ -3,18 +3,22 @@ exports.handler = async (event) => {
     // TODO implement
     
     let respuesta = "";
-    let body;
     let respuesta1 = "";
     let body1;  
-  
+    let file_name = event['name'];
+    let body = "";
+    let hostname = "api.spotify.com";
+    let ContentType = "application/json"
+    let Authorization = "Bearer BQAtS7TmOnr0Zp0jj3fzV_umizwC8sdsASpbfN1qzjLOLAcvdyAWdCiWiJ3tw6mSlaaxdojqmnMrHYHVLbQobmeYLF55h73JkzlCYB9-dXh5-O_D2lW82LmRDbIeRRfQj3gS4p46WWIB0zohoJZvGT3qw-pItEmox093SnaxRYPiZEDDbgCrl9E"
+
   var options = {
-    hostname: "api.spotify.com",
+    hostname: hostname,
     port: 443,
-    path: "/v1/search?q=happy&type=playlist&include_external=audio",
+    path: "/v1/search?q=" + file_name + "&type=playlist&include_external=audio",
     method: 'get',
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': "Bearer BQBg4q4kTX879h_eJ1Dcv39vQUSY1mgB0klL-TQR2M8vaLP9o_ngQXytq3Vnkq0j6SY7qqGVParpemp8omfRqSoX1ndeAgmhwjYGcvKUxL8kSHRUwTFhH0DAM_y9r49Oyh-UZ652b6pVbknd8ykQrjHkwwAUcehJToqyQt9C0DJd7TzZQLeuToY"
+      'Content-Type': ContentType,
+      'Authorization': Authorization
     }
   };
     
@@ -28,39 +32,56 @@ exports.handler = async (event) => {
             body = JSON.parse(respuesta);
             resolve({
                 body: body.playlists.items[0].id
+                //path: path
             });
         });
     });
     rec.on("error", (e) => {
        reject({
            statusCode: 500,
-           body: "Peto"
+           body: "Internal server error"
        }) 
     });
     
     });
     
-    const promise1 = await new Promise((resolve,reject) => {
+   var options1 = {
+    hostname: hostname,
+    port: 443,
+    path: "/v1/playlists/"+body.playlists.items[0].id+"/tracks",
+    method: 'get',
+    headers: {
+      'Content-Type': ContentType,
+      'Authorization': Authorization
+    }
+  };
+  
+  const promise1 = await new Promise((resolve,reject) => {
     
-    const rec = https.get(`https://km3ipz40zl.execute-api.us-east-1.amazonaws.com/v1/playlist/track?name=${body.playlists.items[0].id}`, function(res){
-        res.on("data", chunk => {
-            respuesta1 += chunk;
+    const rec = https.get(options1, function(res){
+        res.on("data", chunk1 => {
+            respuesta1 += chunk1;
         });
         res.on("end", () => {
-            body1 = JSON.parse(respuesta1);
+            let body1 = JSON.parse(respuesta1);
+            let id = [];
+            for(let i=0; i<10;i++){
+              id.push(body1.items[i].track.id) 
+            }
             resolve({
-                body1: body1
+                id: id
             });
         });
     });
     rec.on("error", (e) => {
        reject({
            statusCode: 500,
-           body: "Error al consultar la API"
+           body: "Internal server error API"
        }) 
     });
     
     });
     
-    return promise1;
+    return promise1
+    
 };

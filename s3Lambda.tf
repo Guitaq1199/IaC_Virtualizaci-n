@@ -32,12 +32,3 @@ resource "aws_s3_object" "getPlaylist_zip" {
   etag = filemd5(data.archive_file.codePlaylistID_zip.output_path)
 }
 
-resource "aws_s3_object" "getTracks_zip" {
-
-  bucket = aws_s3_bucket.s3_lambdas.id
-
-  key    = "lambda_getTracks.zip"
-  source = data.archive_file.codeTracksID_zip.output_path
-
-  etag = filemd5(data.archive_file.codeTracksID_zip.output_path)
-}
