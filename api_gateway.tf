@@ -73,7 +73,7 @@ resource "aws_api_gateway_method" "playlist_get" {
   rest_api_id      = aws_api_gateway_rest_api.apigateway.id
   resource_id      = aws_api_gateway_resource.playlist_ID.id
   api_key_required = false
-  http_method      = "POST"
+  http_method      = "GET"
   authorization    = "NONE"
   request_parameters = {"method.request.querystring.name" = true}
   //request_validator_id = aws_api_gateway_request_validator.validator_request.id
@@ -90,9 +90,9 @@ resource "aws_api_gateway_method_response" "ImageDetails_post_response_200" {
     "application/json" = "Empty"
   }
 
-  /*response_parameters = {
+  response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = true
-  }*/
+  }
 }
 
 resource "aws_api_gateway_method_response" "PlaylistDetails_post_response_200" {
@@ -102,13 +102,14 @@ resource "aws_api_gateway_method_response" "PlaylistDetails_post_response_200" {
   http_method = aws_api_gateway_method.playlist_get.http_method
   status_code = "200"
 
+  /*
   response_models = {
     "application/json" = "Empty"
-  }
-
-  /*response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
   }*/
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
 }
 
 resource "aws_api_gateway_integration" "lambda_getEmotion" {
@@ -136,12 +137,12 @@ resource "aws_api_gateway_integration" "lambda_getPlaylist" {
   rest_api_id             = aws_api_gateway_rest_api.apigateway.id
   resource_id             = aws_api_gateway_resource.playlist_ID.id
   http_method             = aws_api_gateway_method.playlist_get.http_method
-  integration_http_method = aws_api_gateway_method.playlist_get.http_method
+  integration_http_method = "POST"
 
   uri = aws_lambda_function.getPlaylist.invoke_arn
 
   type                 = "AWS"
-  passthrough_behavior = "WHEN_NO_MATCH"
+  passthrough_behavior = "WHEN_NO_TEMPLATES"
   content_handling     = "CONVERT_TO_TEXT"
 
   request_templates = {
@@ -158,9 +159,9 @@ resource "aws_api_gateway_integration_response" "lambda_getEmotion" {
   http_method = aws_api_gateway_method.ImageDetails_post.http_method
   status_code = aws_api_gateway_method_response.ImageDetails_post_response_200.status_code
 
-  /*response_parameters = {
+  response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-  }*/
+  }
 
   depends_on = [
     aws_api_gateway_integration.lambda_getEmotion
@@ -175,9 +176,9 @@ resource "aws_api_gateway_integration_response" "lambda_getPlaylist" {
   http_method = aws_api_gateway_method.playlist_get.http_method
   status_code = aws_api_gateway_method_response.PlaylistDetails_post_response_200.status_code
 
-  /*response_parameters = {
+  response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-  }*/
+  }
 
   depends_on = [
     aws_api_gateway_integration.lambda_getPlaylist
@@ -197,7 +198,8 @@ resource "aws_lambda_permission" "api_gw_Emotion" {
 
 resource "aws_lambda_permission" "api_gw_Playlist" {
 
-  statement_id  = "AllowAPIGatewayInvoke"
+  //statement_id  = "AllowAPIGatewayInvoke"
+  statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.getPlaylist.function_name
   principal     = "apigateway.amazonaws.com"
