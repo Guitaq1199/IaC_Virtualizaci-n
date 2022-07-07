@@ -3,11 +3,12 @@ resource "aws_api_gateway_rest_api" "apigateway"{
     name = "APIUploadImage"
     description = "API Gateway para Imagen"
 
+    /*
     binary_media_types = [ 
     "image/jpeg",
     "image/png",
     "application/json"
-  ]
+  ]*/
 }
 
 resource "aws_api_gateway_resource" "image_upload" {
@@ -64,8 +65,8 @@ resource "aws_api_gateway_method" "ImageDetails_post" {
   api_key_required = false
   http_method      = "POST"
   authorization    = "NONE"
-  request_parameters = {"method.request.querystring.file" = true}
-  request_validator_id = aws_api_gateway_request_validator.validator_request.id
+  //request_parameters = {"method.request.querystring.file" = true}
+  //request_validator_id = aws_api_gateway_request_validator.validator_request.id
 }
 
 resource "aws_api_gateway_method" "playlist_get" {
@@ -125,11 +126,12 @@ resource "aws_api_gateway_integration" "lambda_getEmotion" {
   content_handling     = "CONVERT_TO_TEXT"
   passthrough_behavior = "WHEN_NO_TEMPLATES"
 
+  /*
   request_templates = {
     "image/jpeg"       = "{\"name\": \"$input.params('file')\", \"content\": \"$input.body\"}",
     "image/png"        = "{\"name\": \"$input.params('file')\", \"content\": \"$input.body\"}",
     "application/json" = "{\"name\": \"$input.params('file')\", \"content\": \"$input.body\"}"
-  }
+  }*/
 }
 
 resource "aws_api_gateway_integration" "lambda_getPlaylist" {
