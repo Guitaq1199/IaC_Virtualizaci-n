@@ -75,7 +75,7 @@ resource "aws_api_gateway_method" "playlist_get" {
   api_key_required = false
   http_method      = "GET"
   authorization    = "NONE"
-  request_parameters = {"method.request.querystring.name" = true}
+  request_parameters = {"method.request.querystring.name" = true ,  "method.request.querystring.token" = true}
   //request_validator_id = aws_api_gateway_request_validator.validator_request.id
 }
 
@@ -146,7 +146,7 @@ resource "aws_api_gateway_integration" "lambda_getPlaylist" {
   content_handling     = "CONVERT_TO_TEXT"
 
   request_templates = {
-    "application/json" = "{\"name\": \"$input.params('name')\"}"
+    "application/json" = "{\"name\": \"$input.params('name')\", \"token\": \"$input.params('token')\"}"
   }
 
 }

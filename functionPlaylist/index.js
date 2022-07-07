@@ -3,13 +3,15 @@ exports.handler = async (event) => {
     // TODO implement
     
     let respuesta = "";
-    let respuesta1 = "";
-    let body1;  
+    let respuesta1 = "";  
     let file_name = event['name'];
+    let token_name = event['token'];
     let body = "";
     let hostname = "api.spotify.com";
     let ContentType = "application/json"
-    let Authorization = "Bearer BQAtS7TmOnr0Zp0jj3fzV_umizwC8sdsASpbfN1qzjLOLAcvdyAWdCiWiJ3tw6mSlaaxdojqmnMrHYHVLbQobmeYLF55h73JkzlCYB9-dXh5-O_D2lW82LmRDbIeRRfQj3gS4p46WWIB0zohoJZvGT3qw-pItEmox093SnaxRYPiZEDDbgCrl9E"
+    let Authorization = "Bearer " + token_name
+    
+    console.log("pruebas de token",token_name)
 
   var options = {
     hostname: hostname,
@@ -82,6 +84,6 @@ exports.handler = async (event) => {
     
     });
     
-    return promise1
+    return promise1;
     
 };

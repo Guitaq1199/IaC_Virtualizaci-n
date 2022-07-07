@@ -11,6 +11,19 @@ def lambda_handler(event, context):
     file_name = event['name']
     rekognitionClient = boto3.client('rekognition')
     s3Client = boto3.client('s3')
+    client_cred = "fa55ab64b85149fdba7e7568f24636e9:b7f86240d1cb4061ac154e55cb8ef92d"
+    client_cred_b64 = base64.b64encode(client_cred.encode())
+        
+    token_data = {
+        "grant_type": "client_credentials"
+    }
+    token_header = {
+        "Authorization": f"Basic {client_cred_b64.decode()}"
+    }
+    
+    r = requests.post('https://accounts.spotify.com/api/token', data = token_data, headers = token_header)
+    token_data = r.json()
+    access_token = token_data['access_token']
     
     try:
         s3_response = s3Client.put_object(Bucket= BUCKET_NAME, Key= file_name, Body= file_content) 
@@ -32,7 +45,7 @@ def lambda_handler(event, context):
         
     dataEmotion = emotionsData["Type"]
         
-    response = requests.get(f"https://lavl8xge0b.execute-api.us-east-1.amazonaws.com/v1/playlist?name={dataEmotion}")
+    response = requests.get(f"https://99yrxuvsc9.execute-api.us-east-1.amazonaws.com/v1/playlist?name={dataEmotion}&token={access_token}")
     
     return {
         'statusCode': 200,
