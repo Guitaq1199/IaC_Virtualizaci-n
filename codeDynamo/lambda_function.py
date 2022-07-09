@@ -4,7 +4,7 @@ import json
 
 def lambda_handler(event, context):
     print(event)
-    body = json.loads(event['body'])
+    body = json.loads(event["body"])
     method=body["Method"]
     if method == "Insert":
         response = insert(body)
@@ -50,6 +50,13 @@ def Update(event):
     
     return {
         'statusCode': 200,
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type,Access-Control-Allow-Origin',
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+            },
+        
     }
 
 def Delete(event):
@@ -67,10 +74,23 @@ def GetUser(event):
     if "Item" in response:
         return {
         'statusCode': 200,
+        'body': json.dumps(response["Item"]),
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type,Access-Control-Allow-Origin',
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+            },
         }
     else:
         return {
         'statusCode': 404,
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type,Access-Control-Allow-Origin',
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+            },
         }
 
 def Get(event):
@@ -79,5 +99,12 @@ def Get(event):
     response = table.scan()
     response = response["Items"]
     return {
-        'statusCode': 200,
+    'statusCode': 200,
+    'body': json.dumps(response),
+   'headers': {
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+        },
     }
