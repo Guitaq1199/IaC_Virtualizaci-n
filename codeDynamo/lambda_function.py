@@ -3,17 +3,19 @@ import json
 
 
 def lambda_handler(event, context):
-    method=event["Method"]
+    print(event)
+    body = json.loads(event['body'])
+    method=body["Method"]
     if method == "Insert":
-        response = insert(event)
+        response = insert(body)
     elif method == "Update":
-        response = Update(event)
+        response = Update(body)
     elif method == "Delete":
-        response = Delete(event)
+        response = Delete(body)
     elif method == "GetUser":
-        response = GetUser(event)
+        response = GetUser(body)
     elif method == "Get":
-        response = Get(event)
+        response = Get(body)
     return response
 
 def insert(event):
@@ -22,24 +24,33 @@ def insert(event):
     id1=event["UserId"]
     name=event["SongList"]
     response=table.put_item(Item={"UserId":id1,"SongList":name})
-    return response
+    return {
+        'statusCode': 200,
+    }
 
 def Update(event):
+    print(event)
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('SongRecomendation')
     id1=event["UserId"]
     newSong = event["SongList"]
     response = table.get_item(Key={'UserId':id1})
+    print(response)
+    print(id1)
+    print(newSong)
     if "Item" in response:
         SongList = response["Item"]["SongList"]
         for song in newSong:
             if not song in SongList:
                 SongList.append(song)
         response=table.put_item(Item={"UserId":id1,"SongList":SongList})
-        return response
     else:
         response=table.put_item(Item={"UserId":id1,"SongList":newSong})
-        return response
+        print(response)
+    
+    return {
+        'statusCode': 200,
+    }
 
 def Delete(event):
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
@@ -54,13 +65,19 @@ def GetUser(event):
     id1=event["UserId"]
     response = table.get_item(Key={'UserId':id1})
     if "Item" in response:
-        return response
+        return {
+        'statusCode': 200,
+        }
     else:
-        return
+        return {
+        'statusCode': 404,
+        }
 
 def Get(event):
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('SongRecomendation')
     response = table.scan()
     response = response["Items"]
-    return response
+    return {
+        'statusCode': 200,
+    }
