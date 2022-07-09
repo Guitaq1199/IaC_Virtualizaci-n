@@ -23,6 +23,11 @@ resource "aws_api_gateway_resource" "playlist_ID" {
   path_part = "playlist"
 }
 
+resource "aws_api_gateway_resource" "transaction_ID" {
+  rest_api_id = aws_api_gateway_rest_api.apigateway.id
+  parent_id = aws_api_gateway_rest_api.apigateway.root_resource_id
+  path_part = "transaction"
+}
 
 //PENDIENTE
 resource "aws_api_gateway_deployment" "api_deployment" {
@@ -41,6 +46,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
     aws_api_gateway_integration.lambda_getEmotion,
     aws_api_gateway_integration.ImageDetails_cors,
     aws_api_gateway_integration.lambda_getPlaylist,
+    aws_api_gateway_integration.lambda_getTransaction,
   ]
 }
 
@@ -69,6 +75,17 @@ resource "aws_api_gateway_method" "ImageDetails_post" {
   //request_validator_id = aws_api_gateway_request_validator.validator_request.id
 }
 
+resource "aws_api_gateway_method" "transaction_post" {
+
+  rest_api_id      = aws_api_gateway_rest_api.apigateway.id
+  resource_id      = aws_api_gateway_resource.transaction_ID.id
+  api_key_required = false
+  http_method      = "POST"
+  authorization    = "NONE"
+  //request_parameters = {"method.request.querystring.file" = true}
+  //request_validator_id = aws_api_gateway_request_validator.validator_request.id
+}
+
 resource "aws_api_gateway_method" "playlist_get" {
 
   rest_api_id      = aws_api_gateway_rest_api.apigateway.id
@@ -85,6 +102,22 @@ resource "aws_api_gateway_method_response" "ImageDetails_post_response_200" {
   rest_api_id = aws_api_gateway_rest_api.apigateway.id
   resource_id = aws_api_gateway_resource.image_upload.id
   http_method = aws_api_gateway_method.ImageDetails_post.http_method
+  status_code = "200"
+
+  response_models = {
+    "application/json" = "Empty"
+  }
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+}
+
+resource "aws_api_gateway_method_response" "transaction_post_response_200" {
+
+  rest_api_id = aws_api_gateway_rest_api.apigateway.id
+  resource_id = aws_api_gateway_resource.transaction_ID.id
+  http_method = aws_api_gateway_method.transaction_post.http_method
   status_code = "200"
 
   response_models = {
@@ -153,6 +186,36 @@ resource "aws_api_gateway_integration" "lambda_getPlaylist" {
 
 }
 
+resource "aws_api_gateway_integration" "lambda_getTransaction" {
+
+  rest_api_id             = aws_api_gateway_rest_api.apigateway.id
+  resource_id             = aws_api_gateway_resource.transaction_ID.id
+  http_method             = aws_api_gateway_method.transaction_post.http_method
+  integration_http_method = "POST"
+
+  uri = aws_lambda_function.lambda_dynamo_procesor.invoke_arn
+
+  type                 = "AWS"
+  passthrough_behavior = "WHEN_NO_TEMPLATES"
+  content_handling     = "CONVERT_TO_TEXT"
+
+}
+
+resource "aws_api_gateway_integration_response" "lambda_getTransaction" {
+
+  rest_api_id = aws_api_gateway_rest_api.apigateway.id
+  resource_id = aws_api_gateway_resource.transaction_ID.id
+  http_method = aws_api_gateway_method.transaction_post.http_method
+  status_code = aws_api_gateway_method_response.transaction_post_response_200.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.lambda_getEmotion
+  ]
+}
 
 resource "aws_api_gateway_integration_response" "lambda_getEmotion" {
 
@@ -207,6 +270,18 @@ resource "aws_lambda_permission" "api_gw_Playlist" {
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_api_gateway_rest_api.apigateway.execution_arn}/*/${aws_api_gateway_method.playlist_get.http_method}/${aws_api_gateway_resource.playlist_ID.path_part}"
+
+}
+
+resource "aws_lambda_permission" "api_gw_Transaction" {
+
+  //statement_id  = "AllowAPIGatewayInvoke"
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_dynamo_procesor.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.apigateway.execution_arn}/*/${aws_api_gateway_method.transaction_post.http_method}/${aws_api_gateway_resource.transaction_ID.path_part}"
 
 }
 
