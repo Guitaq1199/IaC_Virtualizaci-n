@@ -35,20 +35,21 @@ def lambda_handler(event, context):
     response = rekognitionClient.detect_faces(Image={'S3Object': {'Bucket': BUCKET_NAME, 'Name': file_name}}, Attributes=["ALL"])
     faceResponse = response['FaceDetails']
     emotionsData = faceResponse[0]['Emotions'][0]
+    emotionDataType = emotionsData["Type"]
     
     if emotionsData["Type"] == "HAPPY" or emotionsData["Type"] == "SURPRISED":
         emotionsData["Type"] = "HAPPY"
     elif emotionsData["Type"] == "CALM":
-        emotionsData["Type"] = "CALM VIBES"
+        emotionsData["Type"] = "CALM_VIBES"
     else:
         emotionsData["Type"] = "HAPPY"
         
     dataEmotion = emotionsData["Type"]
         
-    response = requests.get(f"https://99yrxuvsc9.execute-api.us-east-1.amazonaws.com/v1/playlist?name={dataEmotion}&token={access_token}")
+    response = requests.get(f"https://8833fms1w6.execute-api.us-east-1.amazonaws.com/v1/playlist?name={dataEmotion}&token={access_token}")
     
     return {
         'statusCode': 200,
         'body': response.json(),
-        'Emotions': dataEmotion
+        'Emotions': emotionDataType
     }

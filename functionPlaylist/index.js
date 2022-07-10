@@ -9,9 +9,8 @@ exports.handler = async (event) => {
     let body = "";
     let hostname = "api.spotify.com";
     let ContentType = "application/json"
-    let Authorization = "Bearer " + token_name
-    
-    console.log("pruebas de token",token_name)
+    let Authorization = "Bearer " + token_name;
+    let file_number = event['number']
 
   var options = {
     hostname: hostname,
@@ -33,7 +32,7 @@ exports.handler = async (event) => {
         res.on("end", () => {
             body = JSON.parse(respuesta);
             resolve({
-                body: body.playlists.items[0].id
+                body: body.playlists.items[file_number].id
                 //path: path
             });
         });
@@ -50,7 +49,7 @@ exports.handler = async (event) => {
    var options1 = {
     hostname: hostname,
     port: 443,
-    path: "/v1/playlists/"+body.playlists.items[0].id+"/tracks",
+    path: "/v1/playlists/"+body.playlists.items[file_number].id+"/tracks",
     method: 'get',
     headers: {
       'Content-Type': ContentType,
