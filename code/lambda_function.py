@@ -46,7 +46,7 @@ def lambda_handler(event, context):
         
     dataEmotion = emotionsData["Type"]
         
-    response = requests.get(f"https://8833fms1w6.execute-api.us-east-1.amazonaws.com/v1/playlist?name={dataEmotion}&token={access_token}")
+    response = requests.get(f"https://dnnytrqkn7.execute-api.us-east-1.amazonaws.com/v1/playlist?name={dataEmotion}&token={access_token}")
     
     return {
         'statusCode': 200,

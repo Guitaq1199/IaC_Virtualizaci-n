@@ -10,7 +10,7 @@ exports.handler = async (event) => {
     let hostname = "api.spotify.com";
     let ContentType = "application/json"
     let Authorization = "Bearer " + token_name;
-    let file_number = event['number']
+    let file_number = Math.floor(Math.random()*10) + 0;
 
   var options = {
     hostname: hostname,
@@ -33,7 +33,6 @@ exports.handler = async (event) => {
             body = JSON.parse(respuesta);
             resolve({
                 body: body.playlists.items[file_number].id
-                //path: path
             });
         });
     });
@@ -45,6 +44,7 @@ exports.handler = async (event) => {
     });
     
     });
+    
     
    var options1 = {
     hostname: hostname,
